@@ -77,8 +77,8 @@
 " - strange: utf-8 characters are garbled by the mode indicator; press
 "   Ctrl-L to redraw
 " - how to find out which keys are mapped in the mode?
-"	:ConomodemacroLocal cmap <SID>:
-" - mapping <SID>:<BS> (<BS> = a key code expanding to several bytes)
+"	:ConomodemacroLocal cmap <SID>‌
+" - mapping <SID>‌<BS> (<BS> = a key code expanding to several bytes)
 "   doesn't work; probably this is related to a known Vim bug:
 "	:h todo|/These two abbreviations don't give the same result:
 " - manipulation of cmdline and cursor position uses getcmdline(),
@@ -89,7 +89,7 @@
 " TODO: {{{1
 " - M we need a beep: when executing, if one of the recorded commands fails,
 "   the rest of the commands should not be executed
-" - M beep: or just do  :normal <C-C>  plus  feedkeys( <SID>: ) ?
+" - M beep: or just do  :normal <C-C>  plus  feedkeys( <SID>‌ ) ?
 " ? refactor s:count1?
 " ? while recording, use input() for "i", "I", "a", "A"
 " ? recursive <F4>
@@ -143,7 +143,7 @@
 " + BF: cmdl "infiles", inserting "filou" before "f" made try_continue_undo
 "   detect "oufil" as inserted part; now use cursor position to decide
 " + NF: "gX" - cut older undo states
-" + BF: <SID>:<C-R>* now recorded
+" + BF: <SID>‌<C-R>* now recorded
 
 " }}}
 
@@ -416,7 +416,7 @@ func! s:getzappos(zapcmd, ...)
 	    if s:zapmode == "o" && s:operator == "c"
 		let s:rec_op_c = reczap."<CR>". s:MapEscape(aimchar)
 	    else
-		call s:rec_chars(cnt, reczap."<CR>". s:MapEscape(aimchar)."<SID>:")
+		call s:rec_chars(cnt, reczap."<CR>". s:MapEscape(aimchar)."<SID>‌")
 	    endif
 	endif
     else
@@ -550,8 +550,8 @@ func! <sid>edit_r(mode, ...)
 	endif
 	let s:lastedit = ["edit_r", 0, replchar]
 	let s:lastcount = cnt
-	" we must have that damn replchar BEFORE the next <SID>:
-	call s:rec_chars(cnt, "<C-X>&<SID>conor<CR>".s:MapEscape(replchar)."<SID>:")
+	" we must have that damn replchar BEFORE the next <SID>‌
+	call s:rec_chars(cnt, "<C-X>&<SID>conor<CR>".s:MapEscape(replchar)."<SID>‌")
     else
 	let replchar = a:1
 	let cnt = s:lastcount
@@ -636,7 +636,7 @@ func! s:doop_c(str, pos, rep)
 	endif
 	let s:lastitext = newtext
 	if s:recording
-	    call s:rec_chars(s:count1, s:rec_op_c."<C-U>".s:MapEscape(newtext,"v")."<CR><SID>:")
+	    call s:rec_chars(s:count1, s:rec_op_c."<C-U>".s:MapEscape(newtext,"v")."<CR><SID>‌")
 	endif
     else
 	let newtext = s:lastitext
@@ -666,7 +666,7 @@ func! <sid>insert(mode, cmd)
 	endif
 	let s:lastitext = newtext
 	if s:recording
-	    call s:rec_chars(cnt, a:cmd. "<C-X>&". s:MapEscape(newtext,"v"). "<CR><SID>:")
+	    call s:rec_chars(cnt, a:cmd. "<C-X>&". s:MapEscape(newtext,"v"). "<CR><SID>‌")
 	    " faced a crash without <C-X>(eat) (and mapesc)
 	endif
     else
@@ -710,7 +710,7 @@ func! <sid>opend(motion, ...)
 	let isrep = 0
 	if s:recording
 	    if s:operator == "c"
-		" just without trailing "<SID>:"
+		" just without trailing "<SID>‌"
 		let mot = get(s:cmdrev, a:motion, a:motion)
 		let s:rec_op_c = "<C-X>&<SID>ocon".mot."<CR>"
 	    else
@@ -780,7 +780,7 @@ endfunc
 func! <sid>macro_rec()
     let s:counta = ""
     let s:countb = ""
-    cmap <SID>:0 <SID>zero
+    cmap <SID>‌0 <SID>zero
     if !s:recording
 	let s:recbuf = ""
 	let s:recording = 1
@@ -808,9 +808,9 @@ func! <sid>macro_exec()
 	if reclen * cnt > 1000
 	    let cnt = max([1000 / reclen, 1])
 	endif
-	exec "cnoremap <script> <SID>macro_keys <SID>:".repeat(s:recbuf, cnt)
+	exec "cnoremap <script> <SID>macro_keys <SID>‌".repeat(s:recbuf, cnt)
     else
-	cnoremap <script> <SID>macro_keys <SID>:
+	cnoremap <script> <SID>macro_keys <SID>‌
     endif
     call s:undo.mac_begin()
     let s:from_mapping = 1
@@ -844,14 +844,14 @@ func! s:getcount1()
     if s:counta != ""
 	let cnta = s:counta + 0
 	let s:counta = ""
-	cmap <SID>:0 <SID>zero
+	cmap <SID>‌0 <SID>zero
     else
 	let cnta = 1
     endif
     if s:countb != ""
 	let cntb = s:countb + 0
 	let s:countb = ""
-	cnoremap <script> <SID>;0 <SID>ocon0<CR><SID>:
+	cnoremap <script> <SID>;0 <SID>ocon0<CR><SID>‌
     else
 	let cntb = 1
     endif
@@ -860,7 +860,7 @@ endfunc
 
 func! <sid>counta(digit)
     if s:counta == ""
-	cnoremap <script> <SID>:0 <SID>cono0<CR><SID>:
+	cnoremap <script> <SID>‌0 <SID>cono0<CR><SID>‌
     endif
     let s:counta .= a:digit
     return ""
@@ -878,7 +878,7 @@ func! <sid>eatcount(key)
     let s:counta = ""
     let s:countb = ""
     if a:key != "0"
-	cmap <SID>:0 <SID>zero
+	cmap <SID>‌0 <SID>zero
     endif
     if s:recording
 	call s:rec_chars(1, a:key)
@@ -923,7 +923,9 @@ endfunc
 func! <sid>set_tm()
     if s:quitnormal
 	let s:tm_sav = &tm
+        let s:gc_sav = &guicursor
 	set timeoutlen=60000
+        set guicursor=n-v-c-sm-ci:block,i-ve:ver25,r-cr-o:hor20
     endif
     let s:quitnormal = 0
     let s:counta = ""
@@ -939,13 +941,14 @@ func! <sid>set_tm()
     let s:from_mapping = 0
     " or check getchar(1) ?
 
-    cmap <SID>:0 <SID>zero
-    cnoremap <script> <SID>;0 <SID>ocon0<CR><SID>:
+    cmap <SID>‌0 <SID>zero
+    cnoremap <script> <SID>;0 <SID>ocon0<CR><SID>‌
     return ""
 endfunc
 
 func! <sid>rst_tm()
     let &tm = s:tm_sav
+    let &guicursor = s:gc_sav
     let s:quitnormal = 1
     call s:undo.setlastcmdline(getcmdline())
     let s:lastcmdtype = s:cmdtype
@@ -1240,7 +1243,7 @@ endif
 
 cmap		   <Plug>(Conomode)	<SID>(Como)
 cmap     <expr>    <SID>(Como)		getcmdtype()=~'[=>@]' ? "" : "<SID>(ComoProceed)"
-cnoremap <script>  <SID>(ComoProceed)	<SID>set_tm<CR><SID>:
+cnoremap <script>  <SID>(ComoProceed)	<SID>set_tm<CR><SID>‌
 cnoremap <silent>  <SID>set_tm		<C-R>=<sid>set_tm()
 
 " Cmdline Mode Shortcuts: {{{1
@@ -1255,174 +1258,174 @@ if g:conomode_emacs_keys
 endif
 
 " Simple Movement: h l (0) $ {{{1
-cnoremap <script>   <SID>zero	  <SID>prezero<CR><C-B><SID>:
+cnoremap <script>   <SID>zero	  <SID>prezero<CR><C-B><SID>‌
 cnoremap <silent>   <SID>prezero  <C-R>=<sid>eatcount("0")
-cnoremap <script>   <SID>:$	  <SID>predoll<CR><C-E><SID>:
+cnoremap <script>   <SID>‌$	  <SID>predoll<CR><C-E><SID>‌
 cnoremap <silent>   <SID>predoll  <C-R>=<sid>eatcount("$")
 
-cnoremap <expr><script> <SID>:h <sid>repinit("<Left>","h","^")."<SID>dorep<SID>:"
-cnoremap <expr><script> <SID>:l <sid>repinit("<Right>","l","$")."<SID>dorep<SID>:"
-cnoremap <expr><script> <SID>:k <sid>repinit("<Left>","k","^",&co)."<SID>dorep<SID>:"
-cnoremap <expr><script> <SID>:j <sid>repinit("<Right>","j","$",&co)."<SID>dorep<SID>:"
+cnoremap <expr><script> <SID>‌h <sid>repinit("<Left>","h","^")."<SID>dorep<SID>‌"
+cnoremap <expr><script> <SID>‌l <sid>repinit("<Right>","l","$")."<SID>dorep<SID>‌"
+cnoremap <expr><script> <SID>‌k <sid>repinit("<Left>","k","^",&co)."<SID>dorep<SID>‌"
+cnoremap <expr><script> <SID>‌j <sid>repinit("<Right>","j","$",&co)."<SID>dorep<SID>‌"
 
 cnoremap <expr><script> <SID>dorep <sid>rep("<SID>")
 " there must not be a mapping for <SID> itself
 
 " Motions: ^ f F t T ; , w b e W B E {{{1
-cnoremap <script>   <SID>:^	<SID>cono^<CR><SID>:
+cnoremap <script>   <SID>‌^	<SID>cono^<CR><SID>‌
 cnoremap <silent>   <SID>cono^	<C-R>=<sid>move("caret")
-cnoremap <script>   <SID>:<Bar>		<SID>cono<Bar><CR><SID>:
+cnoremap <script>   <SID>‌<Bar>		<SID>cono<Bar><CR><SID>‌
 cnoremap <silent>   <SID>cono<Bar>	<C-R>=<sid>move("bar")
 
-cnoremap <script>   <SID>:f	<SID>conof<CR><SID>:
+cnoremap <script>   <SID>‌f	<SID>conof<CR><SID>‌
 cnoremap <silent>   <SID>conof	<C-R>=<sid>move_zap("f")
-cnoremap <script>   <SID>:F	<SID>conoF<CR><SID>:
+cnoremap <script>   <SID>‌F	<SID>conoF<CR><SID>‌
 cnoremap <silent>   <SID>conoF	<C-R>=<sid>move_zap("F")
-cnoremap <script>   <SID>:t	<SID>conot<CR><SID>:
+cnoremap <script>   <SID>‌t	<SID>conot<CR><SID>‌
 cnoremap <silent>   <SID>conot	<C-R>=<sid>move_zap("t")
-cnoremap <script>   <SID>:T	<SID>conoT<CR><SID>:
+cnoremap <script>   <SID>‌T	<SID>conoT<CR><SID>‌
 cnoremap <silent>   <SID>conoT	<C-R>=<sid>move_zap("T")
-cnoremap <script>   <SID>:;	<SID>cono;<CR><SID>:
+cnoremap <script>   <SID>‌;	<SID>cono;<CR><SID>‌
 cnoremap <silent>   <SID>cono;	<C-R>=<sid>move("scolon")
-cnoremap <script>   <SID>:,	<SID>cono,<CR><SID>:
+cnoremap <script>   <SID>‌,	<SID>cono,<CR><SID>‌
 cnoremap <silent>   <SID>cono,	<C-R>=<sid>move("comma")
 
-cnoremap <script>   <SID>:w	<SID>conow<CR><SID>:
+cnoremap <script>   <SID>‌w	<SID>conow<CR><SID>‌
 cnoremap <silent>   <SID>conow	<C-R>=<sid>move("w")
-cnoremap <script>   <SID>:W	<SID>conoW<CR><SID>:
+cnoremap <script>   <SID>‌W	<SID>conoW<CR><SID>‌
 cnoremap <silent>   <SID>conoW	<C-R>=<sid>move("W")
-cnoremap <script>   <SID>:b	<SID>conob<CR><SID>:
+cnoremap <script>   <SID>‌b	<SID>conob<CR><SID>‌
 cnoremap <silent>   <SID>conob	<C-R>=<sid>move("b")
-cnoremap <script>   <SID>:B	<SID>conoB<CR><SID>:
+cnoremap <script>   <SID>‌B	<SID>conoB<CR><SID>‌
 cnoremap <silent>   <SID>conoB	<C-R>=<sid>move("B")
-cnoremap <script>   <SID>:e	<SID>conoe<CR><SID>:
+cnoremap <script>   <SID>‌e	<SID>conoe<CR><SID>‌
 cnoremap <silent>   <SID>conoe	<C-R>=<sid>move("e")
-cnoremap <script>   <SID>:E	<SID>conoE<CR><SID>:
+cnoremap <script>   <SID>‌E	<SID>conoE<CR><SID>‌
 cnoremap <silent>   <SID>conoE	<C-R>=<sid>move("E")
 
-cnoremap <script>   <SID>:%	<SID>cono%<CR><SID>:
+cnoremap <script>   <SID>‌%	<SID>cono%<CR><SID>‌
 cnoremap <silent>   <SID>cono%	<C-R>=<sid>move("percent")
 
 "" History: k j {{{1
-"cnoremap <script>   <SID>:k	<SID>clru<Up><SID>:
-"cnoremap <script>   <SID>:j	<SID>clru<Down><SID>:
+"cnoremap <script>   <SID>‌k	<SID>clru<Up><SID>‌
+"cnoremap <script>   <SID>‌j	<SID>clru<Down><SID>‌
 "cnoremap <expr>	    <SID>clru	<sid>clru()
 
 " Shortcuts: yy Y dd D x X cc C s S {{{1
-cmap <SID>:yy	<SID>:y_
-cmap <SID>:Y	<SID>:y$
-cmap <SID>:dd	<SID>:d_
-cmap <SID>:D	<SID>:d$
-cmap <SID>:x	<SID>:dl
-cmap <SID>:X	<SID>:dh
-cmap <SID>:cc	<SID>:c_
-cmap <SID>:C	<SID>:c$
-" cmap <SID>:s	<SID>:dli   " not atomic, forgets count when repeating
-cmap <SID>:s	<SID>:cl
-cmap <SID>:S	<SID>:0d$i
+cmap <SID>‌yy	<SID>‌y_
+cmap <SID>‌Y	<SID>‌y$
+cmap <SID>‌dd	<SID>‌d_
+cmap <SID>‌D	<SID>‌d$
+cmap <SID>‌x	<SID>‌dl
+cmap <SID>‌X	<SID>‌dh
+cmap <SID>‌cc	<SID>‌c_
+cmap <SID>‌C	<SID>‌c$
+" cmap <SID>‌s	<SID>‌dli   " not atomic, forgets count when repeating
+cmap <SID>‌s	<SID>‌cl
+cmap <SID>‌S	<SID>‌0d$i
 
 " Put: P p {{{1
-cnoremap <script>   <SID>:P	<SID>conoP<CR><SID>:
+cnoremap <script>   <SID>‌P	<SID>conoP<CR><SID>‌
 cnoremap <silent>   <SID>conoP	<C-\>e<sid>edit_put(1,'"',0,-1)
-cnoremap <script>   <SID>:p	<SID>conop<CR><SID>:
+cnoremap <script>   <SID>‌p	<SID>conop<CR><SID>‌
 cnoremap <silent>   <SID>conop	<C-\>e<sid>edit_put(1,'"',1,-1)
 
 " Operators: d y c {{{1
-cnoremap <script>   <SID>:d	<SID>conod<CR><SID>;
+cnoremap <script>   <SID>‌d	<SID>conod<CR><SID>;
 cnoremap <silent>   <SID>conod	<C-R>=<sid>setop("d")
-cnoremap <script>   <SID>:y	<SID>conoy<CR><SID>;
+cnoremap <script>   <SID>‌y	<SID>conoy<CR><SID>;
 cnoremap <silent>   <SID>conoy	<C-R>=<sid>setop("y")
 
-cnoremap <script>   <SID>:c	<SID>conoc<CR><SID>;
+cnoremap <script>   <SID>‌c	<SID>conoc<CR><SID>;
 cnoremap <silent>   <SID>conoc	<C-R>=<sid>setop("c")
 
 " Simple Changes: r ~ {{{1
-cnoremap <script>   <SID>:r	<SID>conor<CR><SID>:
+cnoremap <script>   <SID>‌r	<SID>conor<CR><SID>‌
 cnoremap <silent>   <SID>conor	<C-\>e<sid>edit_r(1)
-cnoremap <script>   <SID>:~	<SID>cono~<CR><SID>:
+cnoremap <script>   <SID>‌~	<SID>cono~<CR><SID>‌
 cnoremap <silent>   <SID>cono~	<C-\>e<sid>edit_tilde(1)
 
 " Insert: I o a A i {{{1
-cnoremap <script>   <SID>:I	<SID>cono^<CR><SID>rst_tm<CR>
-cmap		    <SID>:i	<SID>rst_tm<SID><CR>
-cnoremap <script>   <SID>:o	<SID>conoi<CR><SID>:
+cnoremap <script>   <SID>‌I	<SID>cono^<CR><SID>rst_tm<CR>
+cmap		    <SID>‌i	<SID>rst_tm<SID><CR>
+cnoremap <script>   <SID>‌o	<SID>conoi<CR><SID>‌
 cnoremap <silent>   <SID>conoi	<C-\>e<sid>insert(1,"o")
-cnoremap <script>   <SID>:a	<Right><SID>rst_tm<CR>
-cnoremap <script>   <SID>:A	<End><SID>rst_tm<CR>
+cnoremap <script>   <SID>‌a	<Right><SID>rst_tm<CR>
+cnoremap <script>   <SID>‌A	<End><SID>rst_tm<CR>
 
 " Undo: u U {{{1
-cnoremap <script>   <SID>:u	<SID>conou<CR><SID>:
+cnoremap <script>   <SID>‌u	<SID>conou<CR><SID>‌
 cnoremap <silent>   <SID>conou	<C-\>e<sid>undo()
-cnoremap <script>   <SID>:U	<SID>conoU<CR><SID>:
+cnoremap <script>   <SID>‌U	<SID>conoU<CR><SID>‌
 cnoremap <silent>   <SID>conoU	<C-\>e<sid>redo()
 
 " Repeating: . q Q @ {{{1
-cnoremap <script>   <SID>:.	<SID>cono.<CR><SID>:
+cnoremap <script>   <SID>‌.	<SID>cono.<CR><SID>‌
 cnoremap <silent>   <SID>cono.	<C-\>e<sid>edit_dot()
-cnoremap <script>   <SID>:q	<SID>conoq<CR><SID>:
+cnoremap <script>   <SID>‌q	<SID>conoq<CR><SID>‌
 cnoremap <silent>   <SID>conoq	<C-R>=<sid>macro_rec()
-cmap		    <SID>:@	<SID>cono@a<SID>macro_keys<C-X>(mapoff)<SID>cono@b
+cmap		    <SID>‌@	<SID>cono@a<SID>macro_keys<C-X>(mapoff)<SID>cono@b
 cnoremap <silent>   <SID>cono@a	<C-R>=<sid>macro_exec()<CR>
-cnoremap <silent>   <SID>:<C-X>(mapoff)	<C-R>=<sid>mapoff()
-cnoremap <script>   <SID>cono@b	<CR><SID>:
+cnoremap <silent>   <SID>‌<C-X>(mapoff)	<C-R>=<sid>mapoff()
+cnoremap <script>   <SID>cono@b	<CR><SID>‌
 " <C-X>(eat) changed into &
-cnoremap	    <SID>:<C-X>&  <Nop>
+cnoremap	    <SID>‌<C-X>&  <Nop>
 cnoremap	    <SID>;<C-X>&  <Nop>
-" same bug as with '<SID>:<BS>': '<SID>:<C-X>(mapoff)' works, but
-" '<SID>:<SID>mapoff' not; this workaround is dirty: <C-X>& typed by the
+" same bug as with '<SID>‌<BS>': '<SID>‌<C-X>(mapoff)' works, but
+" '<SID>‌<SID>mapoff' not; this workaround is dirty: <C-X>& typed by the
 " user bypasses cleanup
 
 " Count: 1 2 3 4 5 6 7 8 9 (0) {{{1
 cnoremap <silent>   <SID>cono0	<C-R>=<sid>counta("0")
-cnoremap <script>   <SID>:1	<SID>cono1<CR><SID>:
+cnoremap <script>   <SID>‌1	<SID>cono1<CR><SID>‌
 cnoremap <silent>   <SID>cono1	<C-R>=<sid>counta("1")
-cnoremap <script>   <SID>:2	<SID>cono2<CR><SID>:
+cnoremap <script>   <SID>‌2	<SID>cono2<CR><SID>‌
 cnoremap <silent>   <SID>cono2	<C-R>=<sid>counta("2")
-cnoremap <script>   <SID>:3	<SID>cono3<CR><SID>:
+cnoremap <script>   <SID>‌3	<SID>cono3<CR><SID>‌
 cnoremap <silent>   <SID>cono3	<C-R>=<sid>counta("3")
-cnoremap <script>   <SID>:4	<SID>cono4<CR><SID>:
+cnoremap <script>   <SID>‌4	<SID>cono4<CR><SID>‌
 cnoremap <silent>   <SID>cono4	<C-R>=<sid>counta("4")
-cnoremap <script>   <SID>:5	<SID>cono5<CR><SID>:
+cnoremap <script>   <SID>‌5	<SID>cono5<CR><SID>‌
 cnoremap <silent>   <SID>cono5	<C-R>=<sid>counta("5")
-cnoremap <script>   <SID>:6	<SID>cono6<CR><SID>:
+cnoremap <script>   <SID>‌6	<SID>cono6<CR><SID>‌
 cnoremap <silent>   <SID>cono6	<C-R>=<sid>counta("6")
-cnoremap <script>   <SID>:7	<SID>cono7<CR><SID>:
+cnoremap <script>   <SID>‌7	<SID>cono7<CR><SID>‌
 cnoremap <silent>   <SID>cono7	<C-R>=<sid>counta("7")
-cnoremap <script>   <SID>:8	<SID>cono8<CR><SID>:
+cnoremap <script>   <SID>‌8	<SID>cono8<CR><SID>‌
 cnoremap <silent>   <SID>cono8	<C-R>=<sid>counta("8")
-cnoremap <script>   <SID>:9	<SID>cono9<CR><SID>:
+cnoremap <script>   <SID>‌9	<SID>cono9<CR><SID>‌
 cnoremap <silent>   <SID>cono9	<C-R>=<sid>counta("9")
 
 " Omap Motions: h l w W b B e E $ ^ {{{1
-cnoremap <script>   <SID>;h	<SID>oconh<CR><SID>:
+cnoremap <script>   <SID>;h	<SID>oconh<CR><SID>‌
 cnoremap <silent>   <SID>oconh	<C-\>e<sid>opend("h")
-cnoremap <script>   <SID>;l	<SID>oconl<CR><SID>:
+cnoremap <script>   <SID>;l	<SID>oconl<CR><SID>‌
 cnoremap <silent>   <SID>oconl	<C-\>e<sid>opend("l")
-cnoremap <script>   <SID>;w	<SID>oconw<CR><SID>:
+cnoremap <script>   <SID>;w	<SID>oconw<CR><SID>‌
 cnoremap <silent>   <SID>oconw	<C-\>e<sid>opend("w")
-cnoremap <script>   <SID>;W	<SID>oconW<CR><SID>:
+cnoremap <script>   <SID>;W	<SID>oconW<CR><SID>‌
 cnoremap <silent>   <SID>oconW	<C-\>e<sid>opend("W")
-cnoremap <script>   <SID>;b	<SID>oconb<CR><SID>:
+cnoremap <script>   <SID>;b	<SID>oconb<CR><SID>‌
 cnoremap <silent>   <SID>oconb	<C-\>e<sid>opend("b")
-cnoremap <script>   <SID>;B	<SID>oconB<CR><SID>:
+cnoremap <script>   <SID>;B	<SID>oconB<CR><SID>‌
 cnoremap <silent>   <SID>oconB	<C-\>e<sid>opend("B")
-cnoremap <script>   <SID>;e	<SID>ocone<CR><SID>:
+cnoremap <script>   <SID>;e	<SID>ocone<CR><SID>‌
 cnoremap <silent>   <SID>ocone	<C-\>e<sid>opend("e")
-cnoremap <script>   <SID>;E	<SID>oconE<CR><SID>:
+cnoremap <script>   <SID>;E	<SID>oconE<CR><SID>‌
 cnoremap <silent>   <SID>oconE	<C-\>e<sid>opend("E")
-cnoremap <script>   <SID>;$	<SID>ocon$<CR><SID>:
+cnoremap <script>   <SID>;$	<SID>ocon$<CR><SID>‌
 cnoremap <silent>   <SID>ocon$	<C-\>e<sid>opend("dollar")
 cnoremap <silent>   <SID>ocon0	<C-\>e<sid>opend("0")
-cnoremap <script>   <SID>;^	<SID>ocon^<CR><SID>:
+cnoremap <script>   <SID>;^	<SID>ocon^<CR><SID>‌
 cnoremap <silent>   <SID>ocon^	<C-\>e<sid>opend("caret")
-cnoremap <script>   <SID>;<Bar>		<SID>ocon<Bar><CR><SID>:
+cnoremap <script>   <SID>;<Bar>		<SID>ocon<Bar><CR><SID>‌
 cnoremap <silent>   <SID>ocon<Bar>	<C-\>e<sid>opend("bar")
 
-cnoremap <script>   <SID>;%	<SID>ocon%<CR><SID>:
+cnoremap <script>   <SID>;%	<SID>ocon%<CR><SID>‌
 cnoremap <silent>   <SID>ocon%	<C-\>e<sid>opend("percent")
 
 " special case
-cnoremap <script>   <SID>;_	<SID>ocon_<CR><SID>:
+cnoremap <script>   <SID>;_	<SID>ocon_<CR><SID>‌
 cnoremap <silent>   <SID>ocon_	<C-\>e<sid>opend("_")
 
 " Omap count: 1 2 3 4 5 6 7 8 9 (0) {{{1
@@ -1447,48 +1450,50 @@ cnoremap <script>   <SID>;9	<SID>ocnt9<CR><SID>;
 cnoremap <silent>   <SID>ocnt9	<C-R>=<sid>countb("9")
 
 " Omap Zap Motions: f F t T ; , {{{1
-cnoremap <script>   <SID>;f	<SID>oconf<CR><SID>:
+cnoremap <script>   <SID>;f	<SID>oconf<CR><SID>‌
 cnoremap <silent>   <SID>oconf	<C-\>e<sid>opend("f",1,"scolon")
-cnoremap <script>   <SID>;F	<SID>oconF<CR><SID>:
+cnoremap <script>   <SID>;F	<SID>oconF<CR><SID>‌
 cnoremap <silent>   <SID>oconF	<C-\>e<sid>opend("F",1,"scolon")
-cnoremap <script>   <SID>;t	<SID>ocont<CR><SID>:
+cnoremap <script>   <SID>;t	<SID>ocont<CR><SID>‌
 cnoremap <silent>   <SID>ocont	<C-\>e<sid>opend("t",1,"scolon")
-cnoremap <script>   <SID>;T	<SID>oconT<CR><SID>:
+cnoremap <script>   <SID>;T	<SID>oconT<CR><SID>‌
 cnoremap <silent>   <SID>oconT	<C-\>e<sid>opend("T",1,"scolon")
-cnoremap <script>   <SID>;;	<SID>ocon;<CR><SID>:
+cnoremap <script>   <SID>;;	<SID>ocon;<CR><SID>‌
 cnoremap <silent>   <SID>ocon;	<C-\>e<sid>opend("scolon")
-cnoremap <script>   <SID>;,	<SID>ocon,<CR><SID>:
+cnoremap <script>   <SID>;,	<SID>ocon,<CR><SID>‌
 cnoremap <silent>   <SID>ocon,	<C-\>e<sid>opend("comma")
 
 " Goodies: c_CTRL-R_*, ^L {{{1
 " non-vi, with undo, count, dot-repeat, recording
-cnoremap <script>   <SID>:<C-R>	<SID>"
-cnoremap <script>   <SID>"*	<SID>CtlR*<CR><SID>:
+cnoremap <script>   <SID>‌<C-R>	<SID>"
+cnoremap <script>   <SID>"*	<SID>CtlR*<CR><SID>‌
 cnoremap <silent>   <SID>CtlR*	<C-\>e<sid>edit_put(1,"*",0,0)
 cmap		    <SID>"	<SID>rst_tm<SID><CR><C-R>
 
-" cnorem <script>   <SID>:<C-L>	<C-R>=<sid>exec("redraw")<CR><SID>:
-cnoremap <script>   <SID>:<C-L>	<Space><C-H><SID>:
+" cnorem <script>   <SID>‌<C-L>	<C-R>=<sid>exec("redraw")<CR><SID>‌
+cnoremap <script>   <SID>‌<C-L>	<Space><C-H><SID>‌
 
-cnoremap <script>   <SID>:gX	<C-R>=<sid>cutundo()<CR><SID>:
+cnoremap <script>   <SID>‌gX	<C-R>=<sid>cutundo()<CR><SID>‌
 
 " Mode Switching: {{{1
 " From Cmdline-Normal mode 
 " to Cmdline mode (start over)
-cmap		    <SID>::	<SID>:dd<C-X>&<SID>rst_tm<SID><CR>
+cmap		    <SID>‌:	<SID>‌dd<C-X>&<SID>rst_tm<SID><CR>
 
-" no map for "<SID>:<Esc>" makes <Esc> return to Normal mode immediately
-" cmap		    <SID>:<CR>	<SID>rst_tm<SID><CR><CR>
+" no map for "<SID>‌<Esc>" makes <Esc> return to Normal mode immediately
+" cmap		    <SID>‌<CR>	<SID>rst_tm<SID><CR><CR>
 
-" to Cmdline mode (key not mapped -> make <SID>: do nothing)
-cnoremap <script>   <SID>:	<SID>rst_tm<CR>
+" to Cmdline mode (key not mapped -> make <SID>‌ do nothing)
+cnoremap <script>   <SID>‌	<SID>rst_tm<CR>
 cnoremap <silent>   <SID>rst_tm <C-R>=<sid>rst_tm()
 cnoremap	    <SID><CR>	<CR>
 
 " Cmdline-Omap mode to Cmdline-Normal mode (implicit)
-cmap		    <SID>;	<SID>:
+cmap		    <SID>;	<SID>‌
 " maybe:
-cmap		    <SID>;<Esc> <SID>:
+cmap		    <SID>;<Esc> <SID>‌
+
+cnoremap <script>  <SID>‌` <SID>rst_tm<CR><C-C>
 
 "}}}1
 
