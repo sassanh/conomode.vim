@@ -1058,10 +1058,10 @@ func! <sid>redo()
     return s:undo.redo()
 endfunc
 
-" func! <sid>clru()
-"     call s:undo.init()
-"     return ""
-" endfunc
+func! <sid>clru()
+    call s:undo.init()
+    return ""
+endfunc
 
 func! <sid>cutundo()
     let undo = s:undo
@@ -1307,9 +1307,9 @@ cnoremap <script>   <SID>‌%	<SID>cono%<CR><SID>‌
 cnoremap <silent>   <SID>cono%	<C-R>=<sid>move("percent")
 
 "" History: k j {{{1
-"cnoremap <script>   <SID>‌k	<SID>clru<Up><SID>‌
-"cnoremap <script>   <SID>‌j	<SID>clru<Down><SID>‌
-"cnoremap <expr>	    <SID>clru	<sid>clru()
+cnoremap <script>   <SID>‌k	<SID>clru<Up><SID>‌
+cnoremap <script>   <SID>‌j	<SID>clru<Down><SID>‌
+cnoremap <expr>	    <SID>clru	<sid>clru()
 
 " Shortcuts: yy Y dd D x X cc C s S {{{1
 cmap <SID>‌yy	<SID>‌y_
